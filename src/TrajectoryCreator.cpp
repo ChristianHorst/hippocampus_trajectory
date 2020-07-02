@@ -18,16 +18,20 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
     Vec3 floorNormal = Vec3(0,0,1);
     
     for(int i = 0; i < iterations; i++)
-    {
+    {   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    
         RapidTrajectoryGenerator traj(position, velocity, acceleration);
         traj.SetGoalPosition(TrajectoryCreator::goal_pos);
         traj.SetGoalVelocity(TrajectoryCreator::goal_vel);
         traj.SetGoalAcceleration(TrajectoryCreator::goal_accel);
         traj.Generate(timeduration + i * 0.2);
         inputfeasibility =    traj.CheckInputFeasibility(fmin,fmax,wmax,minTimeSec);
-        positionfeasibility = traj.CheckPositionFeasibility(floorPos, floorNormal);
+        //positionfeasibility = traj.CheckPositionFeasibility(floorPos, floorNormal);
        // ROS_INFO("Feasibility %i:", feasibility);
-        
+       
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
+        std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
         if(inputfeasibility==0){
             TrajectoryCreator::trajectory_list.push_back(traj);
         }

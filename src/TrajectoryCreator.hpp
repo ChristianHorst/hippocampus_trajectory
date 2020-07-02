@@ -7,6 +7,7 @@
 #include "Vec3.h"
 #include <list> 
 #include <algorithm>
+#include <chrono>
 using namespace RapidQuadrocopterTrajectoryGenerator;
 using namespace std;
 class TrajectoryCreator
