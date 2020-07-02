@@ -14,7 +14,7 @@ BallCatch::BallCatch(ros::NodeHandle* nodehandle):nh(*nodehandle), boatdata(node
     ControlFunction();
 }
 void BallCatch::initializePublisher(){
-        publish_desired_values = nh.advertise<mavros_msgs::HippocampusControl>("hippocampus/desired_values", 1);
+        publish_desired_values = nh.advertise<mavros_msgs::HippocampusControl>("hippocampus/desired", 1);
        
     }
 //-------------MAIN LOOP------------------------------------    
@@ -146,12 +146,12 @@ void BallCatch::CatchTheBall(){
 }
 void BallCatch::PublishDesiredValues(const double thrust_value, const Vec3 axis){
     
-    mavros_msgs::HippocampusControl msg;
+    mavros_msgs::HippocampusDesired msg;
     msg.frame_stamp = ros::Time::now();
     msg.thrust = thrust_value;
-    msg.roll_effort =  axis[0];
-    msg.pitch_effort=  axis[1];
-    msg.yaw_effort  =  axis[2];
+    msg.rollrate =  axis[0];
+    msg.pitchrate=  axis[1];
+    msg.yawrate  =  axis[2];
     publish_desired_values.publish(msg);
 } 
 

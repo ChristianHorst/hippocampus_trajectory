@@ -2,7 +2,7 @@
 import numpy as np
 import rospy
 from geometry_msgs.msg import Pose, PoseArray, PoseStamped, TwistStamped
-from mavros_msgs.msg import  HippocampusControl
+from mavros_msgs.msg import  HippocampusControl,HippocampusDesired
 from pyquaternion import Quaternion
 import controlpy
 import scipy.sparse as sparse
@@ -40,7 +40,7 @@ class controller():
         #Subscriber
         rospy.Subscriber("/mavros/local_position/velocity_bodyNED2", TwistStamped, self.bodyRateCallback)
         rospy.Subscriber("/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
-        rospy.Subscriber("/hippocampus/desired_values", HippocampusControl, self.desiredValuesCallback)
+        rospy.Subscriber("/hippocampus/desired", HippocampusDesired, self.desiredValuesCallback)
         self.control_pub = rospy.Publisher('hippocampus/control', HippocampusControl, queue_size=1)
 
     def publishControlInputs(self):
@@ -59,7 +59,7 @@ class controller():
     def desiredValuesCallback(self, desiredValues):
 
         self.desiredThrust = desiredValues.thrust
-        self.desired_axis =np.array([desiredValues.roll_effort,desiredValues.pitch_effort,desiredValues.yaw_effort])
+        self.desired_axis =np.array([desiredValues.rollrate,desiredValues.pitchrate,desiredValues.yawrate])
 
         print("DesValues Callback",  self.desired_axis )
 

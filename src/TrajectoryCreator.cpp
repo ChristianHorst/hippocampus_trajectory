@@ -16,11 +16,12 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
     
     Vec3 floorPos = Vec3(0,0,0);//any point on the boundary
     Vec3 floorNormal = Vec3(0,0,1);
+    RapidTrajectoryGenerator traj(position, velocity, acceleration);
     
     for(int i = 0; i < iterations; i++)
     {   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     
-        RapidTrajectoryGenerator traj(position, velocity, acceleration);
+       // RapidTrajectoryGenerator traj(position, velocity, acceleration);
         traj.SetGoalPosition(TrajectoryCreator::goal_pos);
         traj.SetGoalVelocity(TrajectoryCreator::goal_vel);
         traj.SetGoalAcceleration(TrajectoryCreator::goal_accel);
@@ -35,6 +36,8 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
         if(inputfeasibility==0){
             TrajectoryCreator::trajectory_list.push_back(traj);
         }
+        
+    traj.Reset();
     }
     //print length of trajectory list
     ROS_INFO("Length of Traj List : %ld", trajectory_list.size() ); 

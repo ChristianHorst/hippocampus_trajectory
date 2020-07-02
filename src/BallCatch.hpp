@@ -5,7 +5,7 @@
 #include <sstream>
 #include "sensor_msgs/Imu.h"
 #include <mavros/mavros_plugin.h>
-#include <mavros_msgs/HippocampusControl.h>
+#include <mavros_msgs/HippocampusDesired.h>
 #include "data_subscriber.hpp"
 #include "rviz.hpp"
 #include <chrono>
