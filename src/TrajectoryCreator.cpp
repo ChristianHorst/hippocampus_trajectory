@@ -27,7 +27,7 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
         traj.SetGoalAcceleration(TrajectoryCreator::goal_accel);
         traj.Generate(timeduration + i * 0.02);
         inputfeasibility =    traj.CheckInputFeasibility(fmin,fmax,wmax,minTimeSec);
-        //positionfeasibility = traj.CheckPositionFeasibility(floorPos, floorNormal);
+        positionfeasibility = traj.CheckPositionFeasibility(floorPos, floorNormal);
        // ROS_INFO("Feasibility %i:", feasibility);
        
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
