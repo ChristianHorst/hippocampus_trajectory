@@ -162,7 +162,7 @@ class controller():
 
 def main():
     rospy.init_node('transform_data')
-    rate = rospy.Rate(50)
+    rate = rospy.Rate(30)
     control = controller()
 
     while not rospy.is_shutdown():
