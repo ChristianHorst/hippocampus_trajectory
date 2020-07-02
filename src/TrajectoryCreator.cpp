@@ -25,7 +25,7 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
         traj.SetGoalPosition(TrajectoryCreator::goal_pos);
         traj.SetGoalVelocity(TrajectoryCreator::goal_vel);
         traj.SetGoalAcceleration(TrajectoryCreator::goal_accel);
-        traj.Generate(timeduration + i * 0.2);
+        traj.Generate(timeduration + i * 0.02);
         inputfeasibility =    traj.CheckInputFeasibility(fmin,fmax,wmax,minTimeSec);
         //positionfeasibility = traj.CheckPositionFeasibility(floorPos, floorNormal);
        // ROS_INFO("Feasibility %i:", feasibility);

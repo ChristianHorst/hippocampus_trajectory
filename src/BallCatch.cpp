@@ -125,7 +125,7 @@ void BallCatch::CatchTheBall(){
     trajcreator.SetGoalAcceleration(accf);
     
 //After Position and Input Feasibility Tests 1 Trajectory gets returned
-    RapidTrajectoryGenerator traj = trajcreator.GenerateTrajectories(pos0,vel0,acc0,50,Tf);
+    RapidTrajectoryGenerator traj = trajcreator.GenerateTrajectories(pos0,vel0,acc0,1000,Tf);
     trajcreator.DeleteTrajectoryList();
     if(Tf <= 0.7) timecorrection=0;
     DesiredAxis =  traj.GetNormalVector((evaluation_time + 0.6 * timecorrection));
