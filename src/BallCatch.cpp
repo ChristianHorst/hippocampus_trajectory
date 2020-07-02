@@ -14,7 +14,7 @@ BallCatch::BallCatch(ros::NodeHandle* nodehandle):nh(*nodehandle), boatdata(node
     ControlFunction();
 }
 void BallCatch::initializePublisher(){
-        publish_desired_values = nh.advertise<mavros_msgs::HippocampusControl>("hippocampus/desired", 1);
+        publish_desired_values = nh.advertise<mavros_msgs::HippocampusDesired>("hippocampus/desired", 1);
        
     }
 //-------------MAIN LOOP------------------------------------    
