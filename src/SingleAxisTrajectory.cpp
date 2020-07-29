@@ -17,7 +17,7 @@
  * along with the code.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SingleAxisTrajectory.h"
+#include "RapidQuadcopterTrajectories/SingleAxisTrajectory.hpp"
 
 #include <math.h>
 #include <algorithm>//For min/max
@@ -149,19 +149,19 @@ void SingleAxisTrajectory::GetMinMaxAcc(double &aMinOut, double &aMaxOut, double
     }
     else
     {//solve linear equation: _g + _b*t == 0:
-			if(_b) _accPeakTimes.t[0] = -_g/_b;
-			else _accPeakTimes.t[0] = 0;
+      if(_b) _accPeakTimes.t[0] = -_g/_b;
+      else _accPeakTimes.t[0] = 0;
       _accPeakTimes.t[1] = 0;
     }
 
     _accPeakTimes.initialised = 1;
   }
 
-	//Evaluate the acceleration at the boundaries of the period:
+  //Evaluate the acceleration at the boundaries of the period:
   aMinOut = std::min(GetAcceleration(t1), GetAcceleration(t2));
   aMaxOut = std::max(GetAcceleration(t1), GetAcceleration(t2));
 
-	//Evaluate at the maximum/minimum times:
+  //Evaluate at the maximum/minimum times:
   for(int i=0; i<2; i++)
   {
     if(_accPeakTimes.t[i] <= t1) continue;
@@ -189,7 +189,7 @@ double SingleAxisTrajectory::GetMaxJerkSquared(double t1, double t2)
     tMax = -_b/_a;
     if(tMax>t1 && tMax<t2)
     {
-			jMaxSqr = std::max(pow(GetJerk(tMax),2),jMaxSqr);
+      jMaxSqr = std::max(pow(GetJerk(tMax),2),jMaxSqr);
     }
   }
 

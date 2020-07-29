@@ -121,6 +121,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${hippocampus_test_SOURCE_DIR}/include
 )
 
 ## Declare a C++ library
@@ -137,7 +138,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/hippocampus_test_node.cpp)
-add_executable(test_publisher  src/BallCatch.cpp src/TrajectoryCreator.cpp src/SingleAxisTrajectory src/rviz.cpp src/RapidTrajectoryGenerator.cpp src/data_subscriber.cpp src/test_publisher.cpp)
+add_executable(test_publisher  src/quartic.cpp src/CollisionChecker.cpp src/BallCatch.cpp src/TrajectoryCreator.cpp src/SingleAxisTrajectory src/rviz.cpp src/RapidTrajectoryGenerator.cpp src/data_subscriber.cpp src/test_publisher.cpp)
 #add_executable(data_subscriber src/data_subscriber.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

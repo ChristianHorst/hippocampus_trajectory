@@ -54,8 +54,6 @@ class controller():
 
         self.control_pub.publish(hcc)
 
-        self.control_pub.publish(hcc)
-
     def desiredValuesCallback(self, desiredValues):
 
         self.desiredThrust = desiredValues.thrust
@@ -161,7 +159,7 @@ class controller():
 
 
 def main():
-    rospy.init_node('transform_data')
+    rospy.init_node('bodyrate_control')
     rate = rospy.Rate(30)
     control = controller()
 

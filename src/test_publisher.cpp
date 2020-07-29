@@ -4,14 +4,14 @@
 #include "sensor_msgs/Imu.h"
 #include <mavros/mavros_plugin.h>
 #include <mavros_msgs/HippocampusControl.h>
-#include "data_subscriber.hpp"
-#include "rviz.hpp"
+#include "hippocampus_test/data_subscriber.hpp"
+#include "hippocampus_test/rviz.hpp"
 #include <chrono>
-#include "RapidTrajectoryGenerator.h"
-#include "TrajectoryCreator.hpp"
+#include "RapidQuadcopterTrajectories/RapidTrajectoryGenerator.hpp"
+#include "hippocampus_test/TrajectoryCreator.hpp"
 #include <math.h> 
 #include <time.h>
-#include "BallCatch.hpp" 
+#include "hippocampus_test/BallCatch.hpp" 
 using namespace std;
 using namespace RapidQuadrocopterTrajectoryGenerator;
 
