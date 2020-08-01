@@ -2,7 +2,7 @@
 import numpy as np
 import rospy
 from geometry_msgs.msg import Pose, PoseArray, PoseStamped, TwistStamped
-from mavros_msgs.msg import  HippocampusControl,HippocampusDesired
+from mavros_msgs.msg import  HippocampusControl,HippocampusDesired,AttitudeControlExt
 from pyquaternion import Quaternion
 import controlpy
 import scipy.sparse as sparse
@@ -38,26 +38,31 @@ class controller():
                              z=0.0)
 
         #Subscriber
-        rospy.Subscriber("/mavros/local_position/velocity_bodyNED2", TwistStamped, self.bodyRateCallback)
-        rospy.Subscriber("/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
+        #rospy.Subscriber("/mavros/local_position/velocity_bodyNED2", TwistStamped, self.bodyRateCallback)
+        #rospy.Subscriber("/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
+        rospy.Subscriber("/uuv00/mavros/local_position/velocity_bodyNED2", TwistStamped, self.bodyRateCallback)
+        #rospy.Subscriber("/uuv00/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
+        rospy.Subscriber("/uuv00/pose_px4", PoseStamped, self.orientationCallback)
         rospy.Subscriber("/hippocampus/desired", HippocampusDesired, self.desiredValuesCallback)
-        self.control_pub = rospy.Publisher('hippocampus/control', HippocampusControl, queue_size=1)
+        #self.control_pub = rospy.Publisher('hippocampus/control', HippocampusControl, queue_size=1)
+        self.control_pub = rospy.Publisher('/uuv00/mavros/hippocampus/attitude_control_ext', AttitudeControlExt, queue_size=1)
 
     def publishControlInputs(self):
-        hcc = HippocampusControl()
-        hcc.frame_stamp = rospy.Time.now()
+        hcc = AttitudeControlExt()
+        hcc.header.stamp = rospy.Time.now()
 
         hcc.thrust = self.desiredThrust
-        hcc.roll_effort = self.taus[0]
-        hcc.pitch_effort = self.taus[1]
-        hcc.yaw_effort = self.taus[2]
+        gain = 100.0 *0.5
+        hcc.roll = self.taus[0]
+        hcc.pitch = -self.taus[1]
+        hcc.yaw = -self.taus[2]
 
         self.control_pub.publish(hcc)
 
     def desiredValuesCallback(self, desiredValues):
 
         self.desiredThrust = desiredValues.thrust
-        self.desired_axis =np.array([desiredValues.rollrate,desiredValues.pitchrate,desiredValues.yawrate])
+        self.desired_axis =np.array([desiredValues.rollrate,desiredValues.pitchrate,desiredValues.yawrate])#check this
 
         print("DesValues Callback",  self.desired_axis )
 
@@ -70,13 +75,15 @@ class controller():
         self.orientation=tmpQuat
         self.desired_axis_body = self.orientation.inverse.rotate(self.desired_axis)
         self.current_axis=self.normalize(self.orientation.rotate(np.array([1, 0, 0])))
+       # print("Controller Current Axis : ", self.current_axis)#check this
 
 
     def bodyRateCallback(self, body_rate_message):
         self.body_rate[0] = body_rate_message.twist.angular.x
         self.body_rate[1] = body_rate_message.twist.angular.y
-        self.body_rate[2] = body_rate_message.twist.angular.z
-        print("BodyRate")
+        self.body_rate[2] = body_rate_message.twist.angular.z #check these
+        print("Controller Body Rates : ", self.body_rate)
+        #print("BodyRate")
 
     def body_rate_control(self):
         print("BodyRateControl")
