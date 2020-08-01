@@ -19,9 +19,10 @@ class test_bodyrate():
         self.camera_orientation = Quaternion(w=1.0,x=0.0,y=0.0,z=0.0)
         self.euler_camera = [0.0, 0.0, 0.0]
         # Subscriber
-        rospy.Subscriber("/mavros/local_position/velocity_bodyNED2", TwistStamped, self.bodyRateCallback)
-        rospy.Subscriber("/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
-        rospy.Subscriber("/mavros/local_position/pose_NED", PoseStamped, self.cameraPoseCallback)
+        #rospy.Subscriber("/uuv00/mavros/local_position/velocity_bodyNED2", TwistStamped, self.bodyRateCallback)
+        #rospy.Subscriber("/uuv00/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
+        rospy.Subscriber("/uuv00/pose_px4", PoseStamped, self.orientationCallback)
+        #rospy.Subscriber("/uuv00/mavros/local_position/pose_NED", PoseStamped, self.cameraPoseCallback)
         #rospy.Subscriber("/estimated_twist", TwistStamped, self.cameraVeloCallback)
         self.desired_pub = rospy.Publisher("/hippocampus/desired", HippocampusDesired, queue_size=1)
 
@@ -47,9 +48,6 @@ class test_bodyrate():
         self.orientation = tmpQuat
         self.current_axis = self.normalize(self.orientation.rotate(np.array([1, 0, 0])))
 
-    def bodyRateCallback(self, body_rate_message):
-        print("Yo")
-
     def goToPosition(self):
         #print("Move To Start")
         self.desiredAxis = unit_vector(np.subtract(self.goal_position, self.gazebo_position))
@@ -71,11 +69,11 @@ class test_bodyrate():
             self.desiredThrust = 0.0
             self.switch = -self.switch
             if self.switch <0:
-                self.goal_position = np.array([2.0, 1.5,0.5])
+                self.goal_position = np.array([2.0, 0.8,0.1])
             if self.switch > 0:
-                self.goal_position = np.array([0.5, 0.5, 0.5])
+                self.goal_position = np.array([0.5, 0.5, 0.1])
             self.publishDesiredValues()
-            rospy.sleep(3.0)
+            rospy.sleep(2.0)
 
     def normalize(self, v):
         norm = np.linalg.norm(v)
