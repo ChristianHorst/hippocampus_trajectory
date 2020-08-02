@@ -5,7 +5,7 @@ BallCatch::BallCatch(ros::NodeHandle* nodehandle):nh(*nodehandle), boatdata(node
     initializePublisher(); 
     DesiredThrust=0.0;
     DesiredAxis = CommonMath::Vec3(1,0,0);
-    StartPosition = CommonMath::Vec3(0.3,0.3,0);
+    StartPosition = CommonMath::Vec3(0.5,0.5,0.3);
     IsAtStart = false;
     OrientateTowardsGoal=false;
     PerformCatching = false;
@@ -93,6 +93,7 @@ void BallCatch::OrientateToGoal(){
     
 }
 void BallCatch::CatchTheBall(){
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     double trajectory_duration = 7.0;
     int coloroption = 0;
     counter = counter + 1;
@@ -136,13 +137,13 @@ void BallCatch::CatchTheBall(){
 //After Position and Input Feasibility Tests 1 Trajectory gets returned
     RapidTrajectoryGenerator traj = trajcreator.GenerateTrajectories(pos0,vel0,acc0,300,Tf);
     
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+   // std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     CollisionChecker checker(traj.GetTrajectory());
     CollisionChecker::CollisionResult stateFeas = checker.CollisionCheck(obstacle, 0.02);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
     
-    //std::cout << "Time difference Collision = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
-    //std::cout << "Time difference Collision= " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
+    std::cout << "Time difference Collision = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
+    std::cout << "Time difference Collision= " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
     
     if(stateFeas == 1)coloroption = 1;
     
