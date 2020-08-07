@@ -65,7 +65,7 @@ class test_bodyrate():
         self.desired_pub.publish(hdes)
 
     def testGoalReached(self):
-        if np.linalg.norm(np.subtract(self.goal_position, self.gazebo_position)) <= 0.2:
+        if np.linalg.norm(np.subtract(self.goal_position, self.gazebo_position)) <= 0.3:
             self.desiredThrust = 0.0
             self.switch = -self.switch
             if self.switch <0:
