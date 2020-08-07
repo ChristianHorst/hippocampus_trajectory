@@ -51,7 +51,7 @@ class test_bodyrate():
     def goToPosition(self):
         #print("Move To Start")
         self.desiredAxis = unit_vector(np.subtract(self.goal_position, self.gazebo_position))
-        self.desiredThrust = 0.2
+        self.desiredThrust = 0.3
 
     def publishDesiredValues(self):
         # 2222print("Publish Data :", self.desiredAxis)
