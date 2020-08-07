@@ -69,9 +69,9 @@ class test_bodyrate():
             self.desiredThrust = 0.0
             self.switch = -self.switch
             if self.switch <0:
-                self.goal_position = np.array([2.0, 0.8,0.4])
+                self.goal_position = np.array([2.0, 0.8,0.5])
             if self.switch > 0:
-                self.goal_position = np.array([0.5, 0.5, 0.4])
+                self.goal_position = np.array([0.5, 0.5, 0.5])
             self.desiredAxis = np.array([1.0, 0.0, 0.0])
             self.publishDesiredValues()
             rospy.sleep(2.0)
