@@ -40,18 +40,13 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
 
 
     
-    
- 
-    
-    
-    
     for(int i = 0; i < iterations; i++)
     {   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     
-        CommonMath::Vec3 posf = Vec3(randPosX(gen), randPosY(gen), randPosZ(gen)); //position
+        CommonMath::Vec3 posf = Vec3(randPosX(gen), randPosY(gen) , randPosZ(gen)); //position
         CommonMath::Vec3 velf = Vec3(randVelX(gen), randVelY(gen), randVelZ(gen)); //velocity
-        CommonMath::Vec3 accf = Vec3(randAccX(gen), randAccY(gen), randAccZ(gen)); //acceleration
-        
+        //CommonMath::Vec3 accf = Vec3(randAccX(gen), randAccY(gen), randAccZ(gen)); //acceleration
+        CommonMath::Vec3 accf = Vec3(0.0, 0.0,0.0);
         RapidTrajectoryGenerator traj(position, velocity, acceleration);
         traj.SetGoalPosition(posf);
         traj.SetGoalVelocity(velf);

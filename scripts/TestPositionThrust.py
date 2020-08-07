@@ -37,7 +37,7 @@ class test_bodyrate():
         self.euler_camera = euler_from_quaternion(np.array([camera_pose.pose.orientation.x,camera_pose.pose.orientation.y,
                                                             camera_pose.pose.orientation.z,camera_pose.pose.orientation.w]))
     def orientationCallback(self, orientation_message):
-        print("OrientCallback")
+        #print("OrientCallback")
         self.gazebo_position[0] = orientation_message.pose.position.x
         self.gazebo_position[1] = orientation_message.pose.position.y
         self.gazebo_position[2] = orientation_message.pose.position.z
@@ -54,7 +54,7 @@ class test_bodyrate():
         self.desiredThrust = 0.3
 
     def publishDesiredValues(self):
-        print("Publish Data :", self.desiredAxis)
+        # 2222print("Publish Data :", self.desiredAxis)
         hdes = HippocampusDesired()
         hdes.frame_stamp = rospy.Time.now()
 
@@ -69,9 +69,10 @@ class test_bodyrate():
             self.desiredThrust = 0.0
             self.switch = -self.switch
             if self.switch <0:
-                self.goal_position = np.array([2.0, 0.8,0.1])
+                self.goal_position = np.array([2.0, 0.8,0.4])
             if self.switch > 0:
-                self.goal_position = np.array([0.5, 0.5, 0.1])
+                self.goal_position = np.array([0.5, 0.5, 0.4])
+            self.desiredAxis = np.array([1.0, 0.0, 0.0])
             self.publishDesiredValues()
             rospy.sleep(2.0)
 

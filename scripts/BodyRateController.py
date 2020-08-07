@@ -64,10 +64,10 @@ class controller():
         self.desiredThrust = desiredValues.thrust
         self.desired_axis =np.array([desiredValues.rollrate,desiredValues.pitchrate,desiredValues.yawrate])#check this
 
-        print("DesValues Callback",  self.desired_axis )
+        #print("DesValues Callback",  self.desired_axis )
 
     def orientationCallback(self, orientation_message):
-        print("OrientCallback")
+        #print("OrientCallback")
         tmpQuat = Quaternion(w=orientation_message.pose.orientation.w,
                              x=orientation_message.pose.orientation.x,
                              y=orientation_message.pose.orientation.y,
@@ -82,11 +82,11 @@ class controller():
         self.body_rate[0] = body_rate_message.twist.angular.x
         self.body_rate[1] = body_rate_message.twist.angular.y
         self.body_rate[2] = body_rate_message.twist.angular.z #check these
-        print("Controller Body Rates : ", self.body_rate)
+        #print("Controller Body Rates : ", self.body_rate)
         #print("BodyRate")
 
     def body_rate_control(self):
-        print("BodyRateControl")
+        #print("BodyRateControl")
         angle_between_axes = np.arccos(np.dot(self.current_axis, self.desired_axis))
         normal = self.normalize(np.cross(self.current_axis, self.desired_axis))
         normal_body = self.orientation.inverse.rotate(normal)
@@ -167,6 +167,7 @@ class controller():
 
 def main():
     rospy.init_node('bodyrate_control')
+    print("Starting Body Rate Controller ... ")
     rate = rospy.Rate(30)
     control = controller()
 

@@ -259,6 +259,7 @@ class RapidTrajectoryGenerator {
  double GetDuration() const{return _tf;};
  double GetTf() const{return _tf;};
  double GetMaxThrust() const{return maximalThrust;};
+ double GetMaxRate() const{return maxRate;};
  private:
   //! Test a section of the trajectory for input feasibility (recursion).
   InputFeasibilityResult CheckInputFeasibilitySection(double fminAllowed,
@@ -271,6 +272,7 @@ class RapidTrajectoryGenerator {
    //!<gravity in the frame of the trajectory
   double _tf;  //!<trajectory end time [s]
   double maximalThrust;
+  double maxRate;
 };
 
 }  //namespace

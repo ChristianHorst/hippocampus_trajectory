@@ -89,34 +89,36 @@ RapidTrajectoryGenerator::InputFeasibilityResult RapidTrajectoryGenerator::Check
   for (int i = 0; i < 3; i++) {
     double amin, amax;
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    _axis[i].GetMinMaxAcc(amin, amax, t1, t2);
+    //_axis[i].GetMinMaxAcc(amin, amax, t1, t2);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
     //std::cout << "Time difference AminMax Gen= " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
     //std::cout << "Time difference AminMax Gen= " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
     //distance from zero thrust point in this axis
-    double v1 = 2.6 * amax + 5.4 * 0.9 ;  //left
-    double v2 = 2.6 * amax + 5.4 * 0.9;  //right
-    maximalThrust = v1;
+    //double v1 = 2.6 * amax + 5.4 * 0.9 ;  //left
+    //double v2 = 2.6 * amax + 5.4 * 0.9;  //right
+   
     
-    std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
+    //std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
     double roots[6];
     roots[0] = t1;
     roots[1] = t2;
     size_t rootCount;
     double c[5] = { 0, 0, 0, 0, 0 };
-    //c[0]=0;
-    //c[1]= (5.4 * (_axis[i].GetParamAlpha() / 24.0)) * 4.0;
-    //c[2]= (2.6 * (_axis[i].GetParamAlpha()/6.0) + (5.4 *  (_axis[i].GetParamBeta()/6.0)) * 3.0) ;
-    //c[3]= (2.6 * (_axis[i].GetParamBeta()/2.0) + (5.4 *  (_axis[i].GetParamGamma()/2.0)) * 2.0);
-    //c[4]= (2.6 * (_axis[i].GetParamGamma()/1.0) + (5.4 *  (_axis[i].GetInitialAcceleration()/1.0)) * 1.0);
+    c[0]=0;
+    c[1]= (5.4 * (_axis[i].GetParamAlpha() / 24.0)) * 4.0;
+    c[2]= (2.6 * (_axis[i].GetParamAlpha()/6.0) + (5.4 *  (_axis[i].GetParamBeta()/6.0)) * 3.0) ;
+    c[3]= (2.6 * (_axis[i].GetParamBeta()/2.0) + (5.4 *  (_axis[i].GetParamGamma()/2.0)) * 2.0);
+    c[4]= (2.6 * (_axis[i].GetParamGamma()/1.0) + (5.4 *  (_axis[i].GetInitialAcceleration()/1.0)) * 1.0);
     
-    //rootCount = Quartic::solveP3(c[2] / c[1], c[3] / c[1], c[4] / c[1], roots);
+    rootCount = Quartic::solveP3(c[2] / c[1], c[3] / c[1], c[4] / c[1], roots);
     //ROS_INFO("Inside MaxCalculation %f  %f %f %f ", roots[2],roots[3],roots[4],roots[5]); 
     //ROS_INFO("Inside RootCount %lu ", rootCount); 
-    //if(roots[2]<0)roots[2]=0;
+    if(roots[2]<0)roots[2]=0;
     //ROS_INFO("GetThrust : %f  v1 : %f ", GetThrust(roots[2]) ,v1);
-    
-    std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
+    double v1 = GetThrust(roots[2]);
+    double v2 = GetThrust(roots[2]);
+    maximalThrust = v1;
+    //std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
     //std::cout << "Time difference Root Finder= " << std::chrono::duration_cast<std::chrono::microseconds>(end2 - begin2).count() << "[µs]" << std::endl;
     //std::cout << "Time difference Root Finder= " << std::chrono::duration_cast<std::chrono::nanoseconds> (end2 - begin2).count() << "[ns]" << std::endl;
     
@@ -142,9 +144,11 @@ RapidTrajectoryGenerator::InputFeasibilityResult RapidTrajectoryGenerator::Check
   double wBound;
   if (fminSqr > 1e-6)
     wBound = sqrt(jmaxSqr / fminSqr);  //the 1e-6 is a divide-by-zero protection
+    
   else
     wBound = std::numeric_limits<double>::max();
-
+  maxRate = wBound;
+  //ROS_INFO("WBound : %f", wBound);
   //definitely infeasible:
   if (fmax < fminAllowed)
     return InputInfeasibleThrustLow;

@@ -160,6 +160,7 @@ void BallCatch::CatchTheBall(){
     //ROS_INFO("THRUST & TF %f %f: \n", DesiredThrust, traj.GetTf());
     //ROS_INFO("DesAxis %f %f %f: \n", DesiredAxis[0],DesiredAxis[1],DesiredAxis[2]);
     CommonMath::Vec3 datainfo = Vec3(execution_time, traj.GetMaxThrust(), traj.GetThrust(evaluation_time + 0.3 * timecorrection));
+    ROS_INFO("Maximal Rate %f : \n", traj.GetMaxRate());
     BallCatch::PublishDesiredValues(DesiredThrust,DesiredAxis);
     rviz_publisher.publishTrajectory(traj, traj.GetTf(), coloroption);
     rviz_publisher.publishGoal(posf);
@@ -217,12 +218,15 @@ void BallCatch::SetTimer(){
     mt19937 gen(0); 
     
     uniform_real_distribution<> randGoalX(1.0, 2.5);
-      uniform_real_distribution<> randGoalY(0.4,1.5);
-      uniform_real_distribution<> randGoalZ(0.1,0.6);
-      BallCatch::posf[0] =randGoalX(gen);
-      BallCatch::posf[1] =randGoalY(gen);
-     BallCatch::posf[2] =randGoalZ(gen);
-     ROS_INFO("RAndom Goal %f %f %f: \n", posf[0],posf[1],posf[2]);
+    uniform_real_distribution<> randGoalY(0.4,1.5);
+    uniform_real_distribution<> randGoalZ(0.1,0.6);
+    BallCatch::posf[0] =randGoalX(gen);
+    BallCatch::posf[1] =randGoalY(gen);
+    BallCatch::posf[2] =randGoalZ(gen);
+  // BallCatch::posf[0] =2.5;
+  // BallCatch::posf[1] =1.5;
+  // BallCatch::posf[2] =0.5;
+    ROS_INFO("RAndom Goal %f %f %f: \n", posf[0],posf[1],posf[2]);
 }
 void BallCatch::Reset(){
     IsAtStart = false;
