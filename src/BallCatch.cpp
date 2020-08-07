@@ -5,7 +5,7 @@ BallCatch::BallCatch(ros::NodeHandle* nodehandle):nh(*nodehandle), boatdata(node
     initializePublisher(); 
     DesiredThrust=0.0;
     DesiredAxis = CommonMath::Vec3(1,0,0);
-    StartPosition = CommonMath::Vec3(0.5,0.5,0.3);
+    StartPosition = CommonMath::Vec3(0.5,0.5,0.5);
     IsAtStart = false;
     OrientateTowardsGoal=false;
     PerformCatching = false;
@@ -113,7 +113,7 @@ void BallCatch::CatchTheBall(){
     CommonMath::Vec3 vel0 = boatdata.GetVelocity(); //velocity
     CommonMath::Vec3 acc0 = boatdata.GetAcceleration() *0; //acceleration
 //Goal State
-    //CommonMath::Vec3 posf = Vec3(1.5, 1.5, 0.5); //position
+    CommonMath::Vec3 posf = Vec3(2.0, 1.0, 0.5); //position
     //posf = Vec3(1.5, 1.5, 0.5);
     CommonMath::Vec3 velf = Vec3(0.5, 0, 0); //velocity
     CommonMath::Vec3 accf = Vec3(0, 0, 0); //acceleration
@@ -220,9 +220,9 @@ void BallCatch::SetTimer(){
     uniform_real_distribution<> randGoalX(1.0, 2.5);
     uniform_real_distribution<> randGoalY(0.4,1.5);
     uniform_real_distribution<> randGoalZ(0.1,0.6);
-    BallCatch::posf[0] =randGoalX(gen);
-    BallCatch::posf[1] =randGoalY(gen);
-    BallCatch::posf[2] =randGoalZ(gen);
+    //BallCatch::posf[0] =randGoalX(gen);
+    //BallCatch::posf[1] =randGoalY(gen);
+    //BallCatch::posf[2] =randGoalZ(gen);
   // BallCatch::posf[0] =2.5;
   // BallCatch::posf[1] =1.5;
   // BallCatch::posf[2] =0.5;
