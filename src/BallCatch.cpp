@@ -50,12 +50,12 @@ void BallCatch::ControlFunction(){
 
 
 void BallCatch::GoToStart(){
-    DesiredThrust = 0.5;
+    DesiredThrust = 0.2;//0.5
     DesiredAxis = (StartPosition - boatdata.GetPosition() ).GetUnitVector();
     
     BallCatch::PublishDesiredValues(DesiredThrust,DesiredAxis);
     
-    if((StartPosition - boatdata.GetPosition()).GetNorm2() < 0.2){
+    if((StartPosition - boatdata.GetPosition()).GetNorm2() < 0.3){
         BallCatch::PublishDesiredValues(0.0,DesiredAxis);
         IsAtStart = true;
         OrientateTowardsGoal = true;
@@ -94,7 +94,7 @@ void BallCatch::OrientateToGoal(){
 }
 void BallCatch::CatchTheBall(){
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    double trajectory_duration = 7.0;
+    double trajectory_duration = 5.0;
     int coloroption = 0;
     counter = counter + 1;
     ros::WallTime go = ros::WallTime::now();
@@ -153,13 +153,13 @@ void BallCatch::CatchTheBall(){
     if(Tf <= 0.7) timecorrection=0;
     DesiredAxis =  traj.GetNormalVector((evaluation_time + 0.6 * timecorrection));
     
-    DesiredThrust = BallCatch::calculateThrust(traj.GetThrust(evaluation_time + 0.3 * timecorrection));
+    DesiredThrust = BallCatch::calculateThrust(0.4*traj.GetThrust(evaluation_time + 0.3 * timecorrection));
     if(traj.GetThrust(evaluation_time) < 0.8) DesiredThrust = 0.45;
     
     //ROS_INFO("THRUST NEWTON  & TF SYS %f %f: \n", traj.GetThrust(evaluation_time),evaluation_time );
     //ROS_INFO("THRUST & TF %f %f: \n", DesiredThrust, traj.GetTf());
     //ROS_INFO("DesAxis %f %f %f: \n", DesiredAxis[0],DesiredAxis[1],DesiredAxis[2]);
-    CommonMath::Vec3 datainfo = Vec3(execution_time, traj.GetMaxThrust(), traj.GetThrust(evaluation_time + 0.3 * timecorrection));
+    CommonMath::Vec3 datainfo = Vec3(execution_time, DesiredThrust, traj.GetThrust(evaluation_time + 0.3 * timecorrection)); //traj.GetMaxThrust()
     ROS_INFO("Maximal Rate %f : \n", traj.GetMaxRate());
     BallCatch::PublishDesiredValues(DesiredThrust,DesiredAxis);
     rviz_publisher.publishTrajectory(traj, traj.GetTf(), coloroption);
@@ -226,7 +226,7 @@ void BallCatch::SetTimer(){
   // BallCatch::posf[0] =2.5;
   // BallCatch::posf[1] =1.5;
   // BallCatch::posf[2] =0.5;
-    ROS_INFO("RAndom Goal %f %f %f: \n", posf[0],posf[1],posf[2]);
+    //ROS_INFO("RAndom Goal %f %f %f: \n", posf[0],posf[1],posf[2]);
 }
 void BallCatch::Reset(){
     IsAtStart = false;

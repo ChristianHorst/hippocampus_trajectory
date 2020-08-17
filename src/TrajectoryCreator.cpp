@@ -13,7 +13,7 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
     double wmax = 20;//[rad/s]
     double minTimeSec = 0.02;//[s]
     
-    int inputfeasibility=0;
+    int inputfeasibility = 0;
     int positionfeasibility =0;
     
     CommonMath::Vec3 floorPos = CommonMath::Vec3(0,0,0);//any point on the boundary
@@ -83,9 +83,9 @@ int TrajectoryCreator::ChooseBestTrajectory(){
     std::vector<double> duration_list;
     for(int k = 0; k < TrajectoryCreator::trajectory_list.size(); k++) {
         //cost_list.push_back( trajectory_list[k].GetCost());
-        duration_list.push_back( trajectory_list[k].GetCost());
+        //duration_list.push_back( trajectory_list[k].GetCost());
         //printf("TimeOfTraject %f:", trajectory_list[k].GetDuration());
-        //duration_list.push_back( trajectory_list[k].GetDuration());
+        duration_list.push_back( trajectory_list[k].GetDuration());
     }
     return std::min_element(duration_list.begin(),duration_list.end()) - duration_list.begin();
 }
