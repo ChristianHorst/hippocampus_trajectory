@@ -31,7 +31,7 @@ class controller():
         self.p_yaw= 1.0
         self.p_roll=1.0
         self.KLQR = self.bodyRateLQR()
-        self.gain=np.array([self.KLQR.item(0),self.KLQR.item(1) ,self.KLQR.item(2) ])
+        self.gain=np.array([self.KLQR.item(0),self.KLQR.item(1)*2.0 ,self.KLQR.item(2)*2.0 ])
         self.orientation =  Quaternion(w=1.0,
                              x=0.0,
                              y=0.0,
