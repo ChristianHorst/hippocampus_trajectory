@@ -113,7 +113,7 @@ void BallCatch::CatchTheBall(){
     CommonMath::Vec3 vel0 = boatdata.GetVelocity(); //velocity
     CommonMath::Vec3 acc0 = boatdata.GetAcceleration() *0; //acceleration
 //Goal State
-    CommonMath::Vec3 posf = Vec3(2.0, 1.0, 0.5); //position
+    CommonMath::Vec3 posf = Vec3(2.0, 0.8, 0.5); //position
     //posf = Vec3(1.5, 1.5, 0.5);
     CommonMath::Vec3 velf = Vec3(0.5, 0, 0); //velocity
     CommonMath::Vec3 accf = Vec3(0, 0, 0); //acceleration
@@ -153,8 +153,9 @@ void BallCatch::CatchTheBall(){
     if(Tf <= 0.7) timecorrection=0;
     DesiredAxis =  traj.GetNormalVector((evaluation_time + 0.6 * timecorrection));
     
-    DesiredThrust = BallCatch::calculateThrust(0.4*traj.GetThrust(evaluation_time + 0.3 * timecorrection));
+    DesiredThrust =  BallCatch::calculateThrust(0.4 *traj.GetThrust(evaluation_time + 0.3 * timecorrection));
     if(traj.GetThrust(evaluation_time) < 0.8) DesiredThrust = 0.45;
+   // DesiredThrust = DesiredThrust;
     
     //ROS_INFO("THRUST NEWTON  & TF SYS %f %f: \n", traj.GetThrust(evaluation_time),evaluation_time );
     //ROS_INFO("THRUST & TF %f %f: \n", DesiredThrust, traj.GetTf());
@@ -209,7 +210,7 @@ double BallCatch::calculateThrust(const double force){
     if (x2 >0 and x2>x1){
         thrust = x2/500;
     }
-
+    if(thrust > 1.0) thrust = 1.0;
     return thrust;
 };
 void BallCatch::SetTimer(){
