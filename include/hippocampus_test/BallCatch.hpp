@@ -6,6 +6,7 @@
 #include "sensor_msgs/Imu.h"
 #include <mavros/mavros_plugin.h>
 #include <mavros_msgs/HippocampusDesired.h>
+#include <mavros_msgs/HippocampusOutput.h>
 #include "hippocampus_test/data_subscriber.hpp"
 #include "hippocampus_test/rviz.hpp"
 #include <chrono>
@@ -41,6 +42,7 @@ public:
 private:
     ros::NodeHandle nh;
     ros::Publisher publish_desired_values;
+    ros::Publisher output_values;
     ros::WallTime timer;
     
     data_subscriber boatdata;

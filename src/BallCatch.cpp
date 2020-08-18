@@ -16,6 +16,7 @@ BallCatch::BallCatch(ros::NodeHandle* nodehandle):nh(*nodehandle), boatdata(node
 }
 void BallCatch::initializePublisher(){
         publish_desired_values = nh.advertise<mavros_msgs::HippocampusDesired>("hippocampus/desired", 1);
+        output_values = nh.advertise<mavros_msgs::HippocampusOutput>("hippocampus/output", 1);
        
     }
 //-------------MAIN LOOP------------------------------------    
@@ -171,7 +172,25 @@ void BallCatch::CatchTheBall(){
     rviz_publisher.publishVelocityText(vel0);
     rviz_publisher.publishDataText(datainfo);
     //Publish rviz Text Velocity
+    //--------------------------------------------------------------OUTPUT DATA ROSBAG-------------------
+    mavros_msgs::HippocampusOutput output;
+    output.frame_stamp = ros::Time::now();
+    CommonMath::Vec3 pos_output=pos0;
+    CommonMath::Vec3 vel_output=vel0;
+    output.des_position.x =pos_output[0]; 
+    output.des_position.y =pos_output[1]; 
+    output.des_position.z =pos_output[2]; 
+    output.des_velocity.x =vel_output[0]; 
+    output.des_velocity.y =vel_output[1]; 
+    output.des_velocity.z =vel_output[2]; 
+    output.des_orientation.x=DesiredAxis[0];
+    output.des_orientation.y=DesiredAxis[1];
+    output.des_orientation.z=DesiredAxis[2];
+    output.thrust_time.x=DesiredThrust;
+    output.thrust_time.y=evaluation_time;
+    output.thrust_time.z=0.0;
     
+    output_values.publish(output);
 }
 void BallCatch::PublishDesiredValues(const double thrust_value, const Vec3 axis){
     
