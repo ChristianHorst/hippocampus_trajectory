@@ -175,8 +175,8 @@ void BallCatch::CatchTheBall(){
     //--------------------------------------------------------------OUTPUT DATA ROSBAG-------------------
     mavros_msgs::HippocampusOutput output;
     output.frame_stamp = ros::Time::now();
-    CommonMath::Vec3 pos_output=pos0;
-    CommonMath::Vec3 vel_output=vel0;
+    CommonMath::Vec3 pos_output=traj.GetPosition(evaluation_time);
+    CommonMath::Vec3 vel_output=traj.GetVelocity(evaluation_time);
     output.des_position.x =pos_output[0]; 
     output.des_position.y =pos_output[1]; 
     output.des_position.z =pos_output[2]; 
