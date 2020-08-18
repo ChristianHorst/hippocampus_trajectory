@@ -95,7 +95,7 @@ void BallCatch::OrientateToGoal(){
 }
 void BallCatch::CatchTheBall(){
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    double trajectory_duration = 5.0;
+    double trajectory_duration = 6.0;
     int coloroption = 0;
     counter = counter + 1;
     ros::WallTime go = ros::WallTime::now();
@@ -114,12 +114,14 @@ void BallCatch::CatchTheBall(){
     CommonMath::Vec3 vel0 = boatdata.GetVelocity(); //velocity
     CommonMath::Vec3 acc0 = boatdata.GetAcceleration() *0; //acceleration
 //Goal State
-    CommonMath::Vec3 posf = Vec3(2.0, 0.8, 0.5); //position
+    CommonMath::Vec3 posf = Vec3(2.0, 0.6, 0.6); //position
     //posf = Vec3(1.5, 1.5, 0.5);
     CommonMath::Vec3 velf = Vec3(0.5, 0, 0); //velocity
     CommonMath::Vec3 accf = Vec3(0, 0, 0); //acceleration
-    if((posf - boatdata.GetPosition()).GetNorm2() < 0.2){
+    if((posf - boatdata.GetPosition()).GetNorm2() < 0.3){
         ROS_INFO("Position Reached\n");
+        BallCatch::PublishDesiredValues(0.0,Vec3(1.0, 0.0, 0.0));
+        ros::Duration(5.0).sleep();
         BallCatch::Reset();
     }
     
