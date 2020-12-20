@@ -15,6 +15,9 @@ public:
     void publishGoal(const Vec3 pose);
     void publishBoatPosition( const CommonMath::Vec3 position, const int counter);
     void publishSingleObstacle( const CommonMath::Vec3 position, const double radius);
+    void publishSingleObstacle2( const CommonMath::Vec3 position, const double radius);
+    void publishSingleObstacle3( const CommonMath::Vec3 position, const double radius);
+    void publishSingleObstacle4( const CommonMath::Vec3 position, const double radius);
     void publishWalls();
     void publishVelocityText(const CommonMath::Vec3 velocity);
     void publishDataText(const CommonMath::Vec3 data);
@@ -24,6 +27,9 @@ private:
     ros::Publisher goal_visual;
     ros::Publisher boat_position;
     ros::Publisher single_obstacle;
+    ros::Publisher single_obstacle2;
+    ros::Publisher single_obstacle3;
+        ros::Publisher single_obstacle4;
     ros::Publisher tank_walls;
     ros::Publisher velo_info;
     ros::Publisher data_info;

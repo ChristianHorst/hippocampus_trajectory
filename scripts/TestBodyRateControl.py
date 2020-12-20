@@ -13,11 +13,12 @@ class test_bodyrate():
         # Subscriber
         #rospy.Subscriber("/uuv00/mavros/local_position/velocity_bodyNED2", TwistStamped, self.bodyRateCallback)
         #rospy.Subscriber("uuv00/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
-        rospy.Subscriber("/uuv00/pose_px4", PoseStamped, self.orientationCallback)
+        rospy.Subscriber("/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
+        #rospy.Subscriber("/uuv00/pose_px4", PoseStamped, self.orientationCallback)
         self.desired_pub = rospy.Publisher("/hippocampus/desired", HippocampusDesired, queue_size=1)
 
     def orientationCallback(self, orientation_message):
-        #print("OrientCallback")
+        print("OrientCallback")
         tmpQuat = Quaternion(w=orientation_message.pose.orientation.w,
                              x=orientation_message.pose.orientation.x,
                              y=orientation_message.pose.orientation.y,
@@ -41,6 +42,7 @@ class test_bodyrate():
         self.desired_pub.publish(hdes)
 
     def testGoalReached(self):
+       # print("Subtract", self.current_axis)
         if np.linalg.norm(np.subtract(self.desiredAxis, self.current_axis)) <= 0.1:
             self.desiredAxis = -self.desiredAxis
             print("GOAL REACHED")
@@ -58,6 +60,7 @@ def main():
     test = test_bodyrate()
 
     while not rospy.is_shutdown():
+
         test.publishDesiredValues()
         test.testGoalReached()
         rate.sleep()

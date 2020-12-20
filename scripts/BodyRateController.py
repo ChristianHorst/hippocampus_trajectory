@@ -2,7 +2,7 @@
 import numpy as np
 import rospy
 from geometry_msgs.msg import Pose, PoseArray, PoseStamped, TwistStamped
-from mavros_msgs.msg import  HippocampusControl,HippocampusDesired,AttitudeControlExt
+from mavros_msgs.msg import  HippocampusControl,HippocampusDesired,AttitudeControlExt,HippocampusOutput,HippocampusOutput_2,HippocampusCurrentaxis
 from pyquaternion import Quaternion
 import controlpy
 import scipy.sparse as sparse
@@ -25,13 +25,15 @@ class controller():
         self.MAX_TORQUE = 10
         self.current_axis = np.array([1.0,0.0,0.0])
         self.desired_axis = np.array([1.0,0.0,0.0])
+        self.desired_rates = np.array([0.0,0.0,0.0])
         self.desired_axis_body = np.array([1.0, 0.0, 0.0])
         self.desiredThrust=0.0
         self.p_pitch= 1.0
         self.p_yaw= 1.0
         self.p_roll=1.0
         self.KLQR = self.bodyRateLQR()
-        self.gain=np.array([self.KLQR.item(0),self.KLQR.item(1)*4.0 ,self.KLQR.item(2)*3.0 ])
+       # self.gain=np.array([self.KLQR.item(0) * 0.1,self.KLQR.item(1)*0.1 ,self.KLQR.item(2)*0.1])
+        self.gain = np.array([self.KLQR.item(0) * 1.4, self.KLQR.item(1) * 1.0, self.KLQR.item(2) * 1.0])
         self.orientation =  Quaternion(w=1.0,
                              x=0.0,
                              y=0.0,
@@ -40,12 +42,15 @@ class controller():
         #Subscriber
         #rospy.Subscriber("/mavros/local_position/velocity_bodyNED2", TwistStamped, self.bodyRateCallback)
         #rospy.Subscriber("/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
-        rospy.Subscriber("/uuv00/mavros/local_position/velocity_bodyNED2", TwistStamped, self.bodyRateCallback)
-        #rospy.Subscriber("/uuv00/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
-        rospy.Subscriber("/uuv00/pose_px4", PoseStamped, self.orientationCallback)
+        rospy.Subscriber("mavros/local_position/velocity_bodyNED2", TwistStamped, self.bodyRateCallback)
+        rospy.Subscriber("/mavros/local_position/pose_NED2", PoseStamped, self.orientationCallback)
+       #New Firmware
+        #rospy.Subscriber("/uuv00/pose_px4", PoseStamped, self.orientationCallback)
         rospy.Subscriber("/hippocampus/desired", HippocampusDesired, self.desiredValuesCallback)
-        #self.control_pub = rospy.Publisher('hippocampus/control', HippocampusControl, queue_size=1)
+        self.control_pub2 = rospy.Publisher('hippocampus/control', HippocampusControl, queue_size=1)
         self.control_pub = rospy.Publisher('/uuv00/mavros/hippocampus/attitude_control_ext', AttitudeControlExt, queue_size=1)
+        self.output_pub = rospy.Publisher('hippocampus/output', HippocampusOutput, queue_size=1)
+        self.output_2_pub = rospy.Publisher('hippocampus/output_2', HippocampusOutput_2, queue_size=1)
 
     def publishControlInputs(self):
         hcc = AttitudeControlExt()
@@ -56,8 +61,63 @@ class controller():
         hcc.roll = self.taus[0]
         hcc.pitch = -self.taus[1]
         hcc.yaw = -self.taus[2]
+        outputx = HippocampusOutput()
+        outputx.frame_stamp = rospy.Time.now()
+        outputx.current_orientation.x = self.current_axis[0]
+        outputx.current_orientation.y = self.current_axis[1]
+        outputx.current_orientation.z = self.current_axis[2]
+        outputx.des_orientation.x = self.desired_axis[0]
+        outputx.des_orientation.y = self.desired_axis[1]
+        outputx.des_orientation.z = self.desired_axis[2]
+        outputx.current_velocity.x = self.desired_rates[0]
+        outputx.current_velocity.y = self.desired_rates[1]
+        outputx.current_velocity.z = self.desired_rates[2]
+        output = HippocampusOutput_2()
+        output.frame_stamp = rospy.Time.now()
+        output.des_rates.x = self.desired_rates[0]
+        output.des_rates.y = self.desired_rates[1]
+        output.des_rates.z = self.desired_rates[2]
 
+        output.current_rates.x = self.body_rate[0]
+        output.current_rates.y = self.body_rate[1]
+        output.current_rates.z = self.body_rate[2]
+        self.output_pub.publish(output)
         self.control_pub.publish(hcc)
+
+    def publishControlInputs2(self):
+        hcc = HippocampusControl()
+        #hcc.header.stamp = rospy.Time.now()
+
+        hcc.thrust = self.desiredThrust
+        gain = 100.0 *0.5
+        hcc.roll_effort = self.taus[0]
+        hcc.pitch_effort = self.taus[1]
+        hcc.yaw_effort = self.taus[2]
+
+        outputx = HippocampusOutput()
+        outputx.frame_stamp = rospy.Time.now()
+        outputx.current_orientation.x = self.current_axis[0]
+        outputx.current_orientation.y = self.current_axis[1]
+        outputx.current_orientation.z = self.current_axis[2]
+        outputx.des_orientation.x = self.desired_axis[0]
+        outputx.des_orientation.y = self.desired_axis[1]
+        outputx.des_orientation.z = self.desired_axis[2]
+        outputx.current_velocity.x =  self.desired_rates[0]
+        outputx.current_velocity.y =  self.desired_rates[1]
+        outputx.current_velocity.z =  self.desired_rates[2]
+        output = HippocampusOutput_2()
+        output.frame_stamp = rospy.Time.now()
+        output.des_rates.x = self.desired_rates[0]
+        output.des_rates.y = self.desired_rates[1]
+        output.des_rates.z = self.desired_rates[2]
+
+        output.current_rates.x = self.body_rate[0]
+        output.current_rates.y = self.body_rate[1]
+        output.current_rates.z = self.body_rate[2]
+
+        #self.output_pub.publish(outputx)
+        self.output_2_pub.publish(output)
+        self.control_pub2.publish(hcc)
 
     def desiredValuesCallback(self, desiredValues):
 
@@ -75,6 +135,7 @@ class controller():
         self.orientation=tmpQuat
         self.desired_axis_body = self.orientation.inverse.rotate(self.desired_axis)
         self.current_axis=self.normalize(self.orientation.rotate(np.array([1, 0, 0])))
+
        # print("Controller Current Axis : ", self.current_axis)#check this
 
 
@@ -108,7 +169,9 @@ class controller():
 
         roll_desired = self.rollRateCalc(error_quaternion)
         body_rate_des = np.array([roll_desired,pitch_desired,yaw_desired])
+       # body_rate_des = np.array([0.0, 0.0,  0.5])
 
+        self.desired_rates =  body_rate_des
 
         term= np.multiply(self.Inertia,self.body_rate)
         feedForward = np.cross(self.body_rate, term)
@@ -121,6 +184,7 @@ class controller():
     def rollRateCalc(self,errorQuat):
         desired_roll_angle = 0.0
         z_inter= np.array([0.0, -np.sin(desired_roll_angle),np.cos(desired_roll_angle)])
+
 
         ex_desired = self.normalize(self.desired_axis)
         ey_desired = self.normalize(np.cross(z_inter, ex_desired))
@@ -154,7 +218,7 @@ class controller():
         # Compute the LQR controller
         gain, X, closedLoopEigVals = controlpy.synthesis.controller_lqr(A, B, Q, R)
         #print("EigenVal", closedLoopEigVals)
-        #print("Gain", gain.T)
+        print("Gain", gain.T)
         return gain
 
     def normalize(self, v):
@@ -173,7 +237,8 @@ def main():
 
     while not rospy.is_shutdown():
         control.body_rate_control()
-        control.publishControlInputs()
+        #control.publishControlInputs()
+        control.publishControlInputs2()
         rate.sleep()
 
 if __name__ == '__main__':

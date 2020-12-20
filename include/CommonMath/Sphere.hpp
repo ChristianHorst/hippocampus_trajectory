@@ -58,8 +58,8 @@ class Sphere : public ConvexObj {
     Boundary bound;
     bound.normal = (testPoint - _centerPoint).GetUnitVector();
     bound.point = (testPoint - _centerPoint).GetUnitVector() * _radius
-        + _centerPoint*0;
-    ROS_INFO("IN SPHERE POINT %f %f %f", bound.point[0],bound.point[1],bound.point[2]);
+        + _centerPoint;
+   // ROS_INFO("IN SPHERE POINT %f %f %f", bound.point[0],bound.point[1],bound.point[2]);
     return bound;
   }
 

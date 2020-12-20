@@ -1,10 +1,12 @@
 <launch>
  	
   <node name="test_bodyrate" pkg="hippocampus_test" type="TestBodyRateControl.py" output="screen"/>
-  <node name="data_subscriber" pkg="hippocampus_test" type="BoatDataNew.py" output="screen"/>
+   <node name="data_subscriber" pkg="hippocampus_test" type="BoatDataNew.py" output="screen"/> 
   <node name="controller" pkg="hippocampus_test" type="BodyRateController.py" output="screen"/>
   <node name="boat_pose" pkg="hippocampus_test" type="publishBoatPosition.py" output="screen"/>
- 
+ <node pkg="rosbag" type="record" name="record"
+        args="record -o $(find hippocampus_test)/bags  /mavros/local_position/velocity_body /estimated_pose /pose_px4 /mavros/imu/data /hippocampus/output /hippocampus/output_2 /mavros/local_position/velocity_local /mavros/local_position/pose"
+    />
 
   
 </launch>

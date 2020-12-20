@@ -10,6 +10,7 @@
 #include <math.h>
 #include <mavros/mavros_plugin.h>
 #include <mavros_msgs/HippocampusControl.h>
+#include <mavros_msgs/HippocampusCurrentaxis.h>
 //#include <mavros/mavros_plugin.h>
 //#include <mavros_msgs/HippocampusControl.h>
 using namespace std;
@@ -26,8 +27,9 @@ public:
     CommonMath::Vec3 GetVelocity(void)     const {return velocity;};
     CommonMath::Vec3 GetAcceleration(void)     const {return acceleration;};
     CommonMath::Vec3 GetAngularVelocity(void)     const {return angular_velocity;};
-    //Vec3 GetCurrentAxis(void)     const {return current_axis;};
+    
     std::vector<double> GetOrientation(void) const {return orientation;};
+    CommonMath::Vec3 GetCurrentAxis(void)     const {return current_axis;};
     
 private:
   ros::NodeHandle nh;
@@ -35,13 +37,14 @@ private:
   ros::Subscriber velocity_subscriber_;
   ros::Subscriber acceleration_subscriber_;
   ros::Subscriber angular_velocity_subscriber_;
- // ros::Subscriber current_axis_subscriber_;
+  ros::Subscriber current_axis_subscriber_;
 
   CommonMath::Vec3 position;
   CommonMath::Vec3 velocity;
   CommonMath::Vec3 acceleration;
   CommonMath::Vec3 angular_velocity;
-  //Vec3 current_axis;
+CommonMath::Vec3 current_axis;
+
   std::vector<double> orientation{0,0,0,0};
   
   void initializeSubscribers();
@@ -49,7 +52,8 @@ private:
   void VelocityCallback(const geometry_msgs::TwistStamped::ConstPtr &velo);
   void AccelerationCallback(const sensor_msgs::Imu::ConstPtr &accel);
   void AngularVelocityCallback(const geometry_msgs::TwistStamped::ConstPtr &angu);
-  //void CurrentAxisCallback(const mavros_msgs::HippocampusControl::ConstPtr &axis);
+  
+  void CurrentAxisCallback(const mavros_msgs::HippocampusCurrentaxis::ConstPtr &axis);
   
 };
 

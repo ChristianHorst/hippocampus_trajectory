@@ -10,13 +10,16 @@ rviz::rviz(ros::NodeHandle* nodehandle):nh(*nodehandle)
        goal_visual = nh.advertise<visualization_msgs::Marker>("goal_visualization", 1);
        boat_position = nh.advertise<visualization_msgs::Marker>("boat_position", 1);
        single_obstacle = nh.advertise<visualization_msgs::Marker>("single_obstacle", 1);
+       single_obstacle2 = nh.advertise<visualization_msgs::Marker>("single_obstacle2", 1);
+       single_obstacle3 = nh.advertise<visualization_msgs::Marker>("single_obstacle3", 1);
+       single_obstacle4 = nh.advertise<visualization_msgs::Marker>("single_obstacle4", 1);
        tank_walls = nh.advertise<visualization_msgs::MarkerArray>("tank_walls", 1);
        velo_info = nh.advertise<visualization_msgs::MarkerArray>("text_info", 1);
        data_info = nh.advertise<visualization_msgs::MarkerArray>("data_info", 1);
     }
 
     void rviz::publishTrajectory(const RapidQuadrocopterTrajectoryGenerator::RapidTrajectoryGenerator &ptr, const double tmr, const int coloroption){
-        ROS_INFO("TEST");
+      //  ROS_INFO("TEST");
         int trajectory_count = 1;
         int trajectory_markerpoints = 50;
         double r = 0.05 * 0.7;
@@ -192,7 +195,67 @@ rviz::rviz(ros::NodeHandle* nodehandle):nh(*nodehandle)
         single_obstacle.publish(obs_pose);
         
     }
-    
+        void rviz::publishSingleObstacle2(const Vec3 position, const double radius){
+        double r = radius;
+        
+        visualization_msgs::Marker obs_pose;
+        obs_pose.header.frame_id = "global_tank";
+        obs_pose.id = 1;
+        obs_pose.type =  obs_pose.SPHERE;
+        obs_pose.action =  obs_pose.ADD;
+        obs_pose.scale.x = 2*r;  
+        obs_pose.scale.y = 2*r;
+        obs_pose.scale.z = 2*r;
+        obs_pose.color.r = 0.5;
+        obs_pose.color.a = 0.5 ; 
+        obs_pose.pose.orientation.w = 1.0;
+        obs_pose.pose.position.x = position[0]; 
+        obs_pose.pose.position.y = position[1]; 
+        obs_pose.pose.position.z = position[2];  
+        single_obstacle2.publish(obs_pose);
+        
+    }
+    void rviz::publishSingleObstacle3(const Vec3 position, const double radius){
+        double r = radius;
+        
+        visualization_msgs::Marker obs_pose;
+        obs_pose.header.frame_id = "global_tank";
+        obs_pose.id = 1;
+        obs_pose.type =  obs_pose.SPHERE;
+        obs_pose.action =  obs_pose.ADD;
+        obs_pose.scale.x = 2*r;  
+        obs_pose.scale.y = 2*r;
+        obs_pose.scale.z = 2*r;
+        obs_pose.color.b = 0.5;
+        obs_pose.color.a = 0.5 ; 
+        obs_pose.pose.orientation.w = 1.0;
+        obs_pose.pose.position.x = position[0]; 
+        obs_pose.pose.position.y = position[1]; 
+        obs_pose.pose.position.z = position[2];  
+        single_obstacle3.publish(obs_pose);
+        
+    }
+    void rviz::publishSingleObstacle4(const Vec3 position, const double radius){
+        double r = radius;
+        
+        visualization_msgs::Marker obs_pose;
+        obs_pose.header.frame_id = "global_tank";
+        obs_pose.id = 1;
+        obs_pose.type =  obs_pose.SPHERE;
+        obs_pose.action =  obs_pose.ADD;
+        obs_pose.scale.x = 2*r;  
+        obs_pose.scale.y = 2*r;
+        obs_pose.scale.z = 2*r;
+        obs_pose.color.b = 0.5;
+        obs_pose.color.g = 0.5;
+        obs_pose.color.a = 0.5 ; 
+        obs_pose.pose.orientation.w = 1.0;
+        obs_pose.pose.position.x = position[0]; 
+        obs_pose.pose.position.y = position[1]; 
+        obs_pose.pose.position.z = position[2];  
+        single_obstacle4.publish(obs_pose);
+        
+    }
    void rviz::publishWalls(){
        
    

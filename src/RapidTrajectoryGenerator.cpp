@@ -97,7 +97,7 @@ RapidTrajectoryGenerator::InputFeasibilityResult RapidTrajectoryGenerator::Check
     //double v1 = 2.6 * amax + 5.4 * 0.9 ;  //left
     //double v2 = 2.6 * amax + 5.4 * 0.9;  //right
    
-    
+//Maximum of m*a + c*v
     //std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
     double roots[6];
     roots[0] = t1;
@@ -105,23 +105,50 @@ RapidTrajectoryGenerator::InputFeasibilityResult RapidTrajectoryGenerator::Check
     size_t rootCount;
     double c[5] = { 0, 0, 0, 0, 0 };
     c[0]=0;
-    c[1]= (5.4 * (_axis[i].GetParamAlpha() / 24.0)) * 4.0;
-    c[2]= (2.6 * (_axis[i].GetParamAlpha()/6.0) + (5.4 *  (_axis[i].GetParamBeta()/6.0)) * 3.0) ;
-    c[3]= (2.6 * (_axis[i].GetParamBeta()/2.0) + (5.4 *  (_axis[i].GetParamGamma()/2.0)) * 2.0);
-    c[4]= (2.6 * (_axis[i].GetParamGamma()/1.0) + (5.4 *  (_axis[i].GetInitialAcceleration()/1.0)) * 1.0);
+    c[1]= (damping * (_axis[i].GetParamAlpha() / 24.0)) * 4.0;
+    c[2]= (massparam * (_axis[i].GetParamAlpha()/6.0) + (damping *  (_axis[i].GetParamBeta()/6.0)) * 3.0) ;
+    c[3]= (massparam * (_axis[i].GetParamBeta()/2.0) + (damping *  (_axis[i].GetParamGamma()/2.0)) * 2.0);
+    c[4]= (massparam * (_axis[i].GetParamGamma()/1.0) + (damping *  (_axis[i].GetInitialAcceleration()/1.0)) * 1.0);
     
     rootCount = Quartic::solveP3(c[2] / c[1], c[3] / c[1], c[4] / c[1], roots);
-    //ROS_INFO("Inside MaxCalculation %f  %f %f %f ", roots[2],roots[3],roots[4],roots[5]); 
+   // ROS_INFO("Inside MaxCalculation1 %f  %f %f %f ", roots[2],roots[3],roots[4],roots[5]); 
     //ROS_INFO("Inside RootCount %lu ", rootCount); 
     if(roots[2]<0)roots[2]=0;
     //ROS_INFO("GetThrust : %f  v1 : %f ", GetThrust(roots[2]) ,v1);
     double v1 = GetThrust(roots[2]);
     double v2 = GetThrust(roots[2]);
     maximalThrust = v1;
+    minimalThrust = GetThrust(roots[3]);
+   // ROS_INFO("Max/Min Thrust %f %f ", maximalThrust,minimalThrust); 
+   // ROS_INFO("Minimum Thrust Formula %f", std::min(maximalThrust,minimalThrust));
     //std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
     //std::cout << "Time difference Root Finder= " << std::chrono::duration_cast<std::chrono::microseconds>(end2 - begin2).count() << "[µs]" << std::endl;
     //std::cout << "Time difference Root Finder= " << std::chrono::duration_cast<std::chrono::nanoseconds> (end2 - begin2).count() << "[ns]" << std::endl;
     
+//Maximum of m*j + c*a
+    double roots2[6];
+    roots2[0] = t1;
+    roots2[1] = t2;
+    size_t rootCount2;
+    double c2[5] = { 0, 0, 0, 0, 0 };
+    c2[0]= 0;
+    c2[1]= 0;
+    c2[2]= (damping * (_axis[i].GetParamAlpha()/2.0) );
+    c2[3]= (massparam * (_axis[i].GetParamAlpha()/1.0) + (damping *  (_axis[i].GetParamBeta()/1.0)) * 1.0);
+    c2[4]= (massparam * (_axis[i].GetParamBeta()/1.0) + (damping *  (_axis[i].GetParamGamma()/1.0)) * 1.0);
+
+    Vec3 rootsQuadratic = RapidTrajectoryGenerator::CalculateQuadraticExtrema(c2[2], c2[3],  c2[4]); 
+    //ROS_INFO("Inside MaxCalculation2 %f  %f %f ", rootsQuadratic[0],rootsQuadratic[1],rootsQuadratic[2]);
+    double maximum1 = _axis[i].GetJerk(rootsQuadratic[1]) * massparam + _axis[i].GetAcceleration(rootsQuadratic[1]) * damping;
+    double maximum2 = _axis[i].GetJerk(rootsQuadratic[2]) * massparam + _axis[i].GetAcceleration(rootsQuadratic[2]) * damping;
+   //double maximum3 = c[1]*pow(rootsQuadratic[1],3)+ c[2]*pow(rootsQuadratic[1],2)+ c[3] * pow(rootsQuadratic[1],1) +c[4];
+   // double maximum4 = c[1]*pow(rootsQuadratic[2],3)+ c[2]*pow(rootsQuadratic[2],2)+ c[3] * pow(rootsQuadratic[2],1) +c[4];
+    bodyrateBound = (std::max(maximum1,maximum2) / std::min(maximalThrust,minimalThrust));
+   // ROS_INFO("MAXIMA1 %f  %f  ", maximum1,maximum2);
+   // ROS_INFO("Maxima FDot %f:", std::max(maximum1,maximum2));
+  //  ROS_INFO("BODY RATES %f :",bodyrateBound);
+   // ROS_INFO("MAXIMA2 %f  %f  ", maximum3,maximum4);
+
     
     //definitely infeasible:
     if (std::max(pow(v1, 2), pow(v2, 2)) > pow(fmaxAllowed, 2))
@@ -194,13 +221,7 @@ RapidTrajectoryGenerator::StateFeasibilityResult RapidTrajectoryGenerator::Check
   //Ensure that the normal is a unit vector:
   boundaryNormal = boundaryNormal.GetUnitVector();
 
-  //first, we will build the polynomial describing the velocity of the a
-  //quadrocopter in the direction of the normal. Then we will solve for
-  //the zeros of this, which give us the times when the position is at a
-  //critical point. Then we evaluate the position at these points, and at
-  //the trajectory beginning and end, to see whether we are feasible.
-
-  //need to check that the trajectory stays inside the safe box throughout the flight:
+  
 
   //the coefficients of the quartic equation: x(t) = c[0]t**4 + c[1]*t**3 + c[2]*t**2 + c[3]*t + c[4]
   double c[5] = { 0, 0, 0, 0, 0 };
@@ -263,4 +284,35 @@ Vec3 RapidTrajectoryGenerator::GetOmega(double t, double timeStep) const {
       return angle * n;
     }
   }
+}
+Vec3 RapidTrajectoryGenerator::CalculateQuadraticExtrema(double a_coeff, double b_coeff, double c_coeff) const {
+    Vec3 Result = Vec3(0, 0, 0);
+    double  x1, x2, discriminant;
+    discriminant = b_coeff * b_coeff - 4 * a_coeff * c_coeff;
+    
+    if (discriminant > 0) {
+        x1 = (-b_coeff + sqrt(discriminant)) / (2*a_coeff);
+        x2 = (-b_coeff - sqrt(discriminant)) / (2*a_coeff);
+       // cout << "Roots are real and different." << endl;
+        //cout << "x1 = " << x1 << endl;
+        //cout << "x2 = " << x2 << endl;
+    }
+    
+    else if (discriminant == 0) {
+        //cout << "Roots are real and same." << endl;
+        x1 = (-b_coeff + sqrt(discriminant)) / (2*a_coeff);
+        x2 = x1;
+        //cout << "x1 = x2 =" << x1 << endl;
+    }
+
+    else {
+        double test = 0;
+        x1 = 0;
+        x2 = 0;
+        //cout << "Roots are complex and different."  << endl;
+        
+    }
+    Result[1]=x1;
+    Result[2]=x2;
+    return Result;
 }

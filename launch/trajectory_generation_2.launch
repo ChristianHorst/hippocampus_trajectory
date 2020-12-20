@@ -3,7 +3,10 @@
   <node name="main_node" pkg="hippocampus_test" type="test_publisher" output="screen"/>
   <node name="data_subscriber" pkg="hippocampus_test" type="BoatDataNew.py" output="screen"/>
   <node name="boat_pose" pkg="hippocampus_test" type="publishBoatPosition.py" output="screen"/>
-  
+
+   <node pkg="rosbag" type="record" name="record"
+        args="record -o $(find hippocampus_test)/bags  /mavros/local_position/velocity_bodyNED2 /uuv00/estimated_pose /uuv00/pose_px4 /mavros/imu/data /hippocampus/output /hippocampus/output_2 /mavros/local_position/velocity_localNED2 /mavros/local_position/pose /hippocampus/desired mavros/local_position/pose_NED2"
+    />
  
   
 </launch>

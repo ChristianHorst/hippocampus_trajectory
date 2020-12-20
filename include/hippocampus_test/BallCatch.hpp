@@ -23,7 +23,7 @@
 #include "CommonMath/Sphere.hpp"
 #include "CommonMath/Vec3.hpp"
 #include "RapidCollisionDetection/CollisionChecker.hpp"
-
+using namespace RapidQuadrocopterTrajectoryGenerator;
 
 using namespace std;
 using namespace std::chrono;
@@ -44,8 +44,8 @@ private:
     ros::Publisher publish_desired_values;
     ros::Publisher output_values;
     ros::WallTime timer;
-    
-    data_subscriber boatdata;
+    RapidTrajectoryGenerator traj;
+    data_subscriber boatdata; 
     rviz rviz_publisher;
     TrajectoryCreator trajcreator;
     void SetTimer();
@@ -55,6 +55,10 @@ private:
     double calculateThrust(const double force);
     void GoToStart();
     void OrientateToGoal();
+    void calculateGoal();
+    void closeGoal();
+    void writeData(const CommonMath::Vec3 des_pos,const CommonMath::Vec3 curr_pos,const CommonMath::Vec3 des_vel,
+                   const CommonMath::Vec3 curr_vel,double des_time,double final_time,CommonMath::Vec3 curr_orient);
     //void ControlFunction();
     int counter;
     
@@ -62,9 +66,13 @@ private:
     bool PerformCatching;
     bool SetTheTime;
     bool OrientateTowardsGoal;
+    bool CloseToGoal;
     
     double DesiredThrust;
+    double execution_time;
+    double trajectory_duration, Tf;
     CommonMath::Vec3 DesiredAxis,StartPosition,posf;
+    CommonMath::Vec3 goalPosition, goalVelocity, goalAcceleration;
     
 };
 

@@ -5,7 +5,7 @@ from pyquaternion import Quaternion
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Pose, PoseArray, PoseStamped, TwistStamped
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
-from mavros_msgs.msg import  HippocampusControl
+from mavros_msgs.msg import  HippocampusControl,HippocampusCurrentaxis
 #from Utilities.utils import RPYToRot, RotToQuat, RotToRPY
 import random
 
@@ -43,18 +43,18 @@ class BoatData:
 
 
         #Publisher
-        self.position_publish = rospy.Publisher('/uuv00/mavros/local_position/pose_NED2', PoseStamped, queue_size=1)
-        self.velocity_publish = rospy.Publisher('/uuv00/mavros/local_position/velocity_localNED2', TwistStamped, queue_size=1)
-        self.accel_publish = rospy.Publisher('/uuv00/mavros/imu/data_NED2', Imu, queue_size=1)
-        self.angular_velocity_publish = rospy.Publisher('/uuv00/mavros/local_position/velocity_bodyNED2', TwistStamped, queue_size=1)
+        self.position_publish = rospy.Publisher('/mavros/local_position/pose_NED2', PoseStamped, queue_size=1)
+        self.velocity_publish = rospy.Publisher('/mavros/local_position/velocity_localNED2', TwistStamped, queue_size=1)
+        self.accel_publish = rospy.Publisher('/mavros/imu/data_NED2', Imu, queue_size=1)
+        self.angular_velocity_publish = rospy.Publisher('/mavros/local_position/velocity_bodyNED2', TwistStamped, queue_size=1)
         #self.current_axis_pub = rospy.Publisher('/hippocampus/current_axis', HippocampusControl,
           #                                              queue_size=1)
         # Subscriber
-
-        rospy.Subscriber("/uuv00/mavros/local_position/pose", PoseStamped, self.poseCallback)
-        rospy.Subscriber("/uuv00/mavros/local_position/velocity_body", TwistStamped, self.angularVeloCallback)
-        rospy.Subscriber("/uuv00/mavros/local_position/velocity_local", TwistStamped, self.veloCallback)
-        rospy.Subscriber("/uuv00/mavros/imu/data", Imu, self.imuCallback)
+        self.axis_publish = rospy.Publisher('/hippocampus/currentaxis', HippocampusCurrentaxis, queue_size=1)
+        rospy.Subscriber("/mavros/local_position/pose", PoseStamped, self.poseCallback)
+        rospy.Subscriber("/mavros/local_position/velocity_body", TwistStamped, self.angularVeloCallback)
+        rospy.Subscriber("/mavros/local_position/velocity_local", TwistStamped, self.veloCallback)
+        rospy.Subscriber("/mavros/imu/data", Imu, self.imuCallback)
 
         rospy.Subscriber("/mavros/local_position/pose_NED", PoseStamped, self.cameraPoseCallback)
         rospy.Subscriber("/estimated_twist", TwistStamped, self.cameraVeloCallback)
@@ -97,6 +97,12 @@ class BoatData:
         NED.pose.orientation.x = self.quat_orientation.x
         NED.pose.orientation.y = self.quat_orientation.y
         NED.pose.orientation.z = self.quat_orientation.z
+        currAxis = HippocampusCurrentaxis()
+        currAxis.frame_stamp = rospy.Time.now()
+        currAxis.axis_x = current_axis[0]
+        currAxis.axis_y = current_axis[1]
+        currAxis.axis_z = current_axis[2]
+        self.axis_publish.publish(currAxis)
         self.position_publish.publish(NED)
         #current_axis = self.normalize(self.quat_orientation.rotate(np.array([1, 0, 0])))
         #hcc = HippocampusControl()

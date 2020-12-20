@@ -73,7 +73,7 @@ typename CollisionChecker::CollisionResult CollisionChecker::CollisionCheck(
   if (obstacle->IsPointInside(_traj.GetValue(_traj.GetStartTime())) //Vergleich Position GPS und Trajectory Position
       || obstacle->IsPointInside(_traj.GetValue(_traj.GetEndTime()))) {
     // If the starting or ending point is inside the obstacle, we're infeasible
-    ROS_INFO("START OR END POINT IN OBSTACLE  %f %f %f\n",_traj.GetValue(_traj.GetStartTime())[0], _traj.GetValue(_traj.GetStartTime())[1],_traj.GetValue(_traj.GetStartTime())[2] );
+   // ROS_INFO("START OR END POINT IN OBSTACLE  %f %f %f\n",_traj.GetValue(_traj.GetStartTime())[0], _traj.GetValue(_traj.GetStartTime())[1],_traj.GetValue(_traj.GetStartTime())[2] );
     return Collision;
   }
   return CollisionCheckSection(_traj.GetStartTime(), _traj.GetEndTime(),
@@ -89,7 +89,7 @@ typename CollisionChecker::CollisionResult CollisionChecker::CollisionCheckSecti
   Vec3 midpoint = _traj.GetValue(midTime);
   if (obstacle->IsPointInside(midpoint)) {
     // The midpoint is inside the obstacle, so we're infeasible
-    ROS_INFO("MIDPOINT IN OBSTACLE\n");
+  //  ROS_INFO("MIDPOINT IN OBSTACLE\n");
     return Collision;
   }
   if (tf - ts < minTimeSection) {

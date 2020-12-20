@@ -185,12 +185,16 @@ class RapidTrajectoryGenerator {
 
   //! Return the quadrocopter's normal vector along the trajectory at time t
   CommonMath::Vec3 GetNormalVector(double t) const {
-    return (CommonMath::Vec3(0,0,0.0000001)+GetAcceleration(t).Multi(2.6) +  GetVelocity(t).Multi(5.4) ).GetUnitVector();
+    return (CommonMath::Vec3(0,0,0.0000001)+GetAcceleration(t).Multi(massparam) +  GetVelocity(t).Multi(damping) ).GetUnitVector();
   }
   ;
   //! Return the quadrocopter's thrust input along the trajectory at time t
   double GetThrust(double t) const {
-     return ( GetAcceleration(t).Multi(2.6) +  GetVelocity(t).Multi(5.4) ).GetNorm2();
+     return ( GetAcceleration(t).Multi(massparam) +  GetVelocity(t).Multi(damping) ).GetNorm2();
+  }
+  ;
+    CommonMath::Vec3 GetThrustVector(double t) const {
+     return  (GetAcceleration(t).Multi(massparam) +  GetVelocity(t).Multi(damping) );
   }
   ;
   /*! Return the quadrocopter's body rates along the trajectory at time t
@@ -227,7 +231,8 @@ class RapidTrajectoryGenerator {
   double GetAxisParamGamma(int i) const {
     return _axis[i].GetParamGamma();
   }
-
+ CommonMath::Vec3 CalculateQuadraticExtrema(double a_coeff, double b_coeff, double c_coeff) const ;
+ 
   //! Returns a Trajectory object representing the generated trajectory.
   CommonMath::Trajectory GetTrajectory() {
     return CommonMath::Trajectory(
@@ -272,7 +277,11 @@ class RapidTrajectoryGenerator {
    //!<gravity in the frame of the trajectory
   double _tf;  //!<trajectory end time [s]
   double maximalThrust;
+  double minimalThrust;
+  double bodyrateBound;
   double maxRate;
+  double damping = 5.4;
+  double massparam = 2.6;
 };
 
 }  //namespace

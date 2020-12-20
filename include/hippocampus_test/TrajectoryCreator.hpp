@@ -20,9 +20,9 @@ class TrajectoryCreator
 public:
     TrajectoryCreator();
     RapidTrajectoryGenerator GenerateTrajectories(const CommonMath::Vec3 position, const CommonMath::Vec3 velocity, const CommonMath::Vec3 acceleration, const int iterations, const double timeduration);
-    void SetGoalPosition(const CommonMath::Vec3 in);
-    void SetGoalVelocity(const CommonMath::Vec3 in);
-    void SetGoalAcceleration(const CommonMath::Vec3 in);
+    void SetNewPos(const CommonMath::Vec3 in);
+    void SetNewVel(const CommonMath::Vec3 in);
+    void SetNewAccel(const CommonMath::Vec3 in);
     void DeleteTrajectoryList() { TrajectoryCreator::trajectory_list.clear(); };
     
 private:

@@ -1,61 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Session Name="/home/chh/catkin_ws/src/hippocampus_test/hippocampus_test.workspace">
-  <int Value="2" Name="m_selectedTab"/>
+  <int Value="1" Name="m_selectedTab"/>
   <wxString Value="/home/chh/catkin_ws/src/hippocampus_test/hippocampus_test.workspace" Name="m_workspaceName"/>
   <TabInfoArray Name="TabInfoArray">
     <TabInfo>
-      <wxString Value="/home/chh/catkin_ws/src/hippocampus_test/src/rviz.cpp" Name="FileName"/>
-      <int Value="0" Name="FirstVisibleLine"/>
-      <int Value="14" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-      <IntVector Name="CollapsedFolds"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/home/chh/catkin_ws/src/hippocampus_test/src/CollisionChecker.cpp" Name="FileName"/>
-      <int Value="18" Name="FirstVisibleLine"/>
-      <int Value="19" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-      <IntVector Name="CollapsedFolds"/>
-    </TabInfo>
-    <TabInfo>
       <wxString Value="/home/chh/catkin_ws/src/hippocampus_test/src/BallCatch.cpp" Name="FileName"/>
-      <int Value="143" Name="FirstVisibleLine"/>
-      <int Value="155" Name="CurrentLine"/>
+      <int Value="200" Name="FirstVisibleLine"/>
+      <int Value="201" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/chh/catkin_ws/src/hippocampus_test/src/TrajectoryCreator.cpp" Name="FileName"/>
-      <int Value="24" Name="FirstVisibleLine"/>
-      <int Value="22" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-      <IntVector Name="CollapsedFolds"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/home/chh/catkin_ws/src/hippocampus_test/include/hippocampus_test/rviz.hpp" Name="FileName"/>
-      <int Value="9" Name="FirstVisibleLine"/>
-      <int Value="28" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-      <IntVector Name="CollapsedFolds"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/home/chh/catkin_ws/src/hippocampus_test/src/test_publisher.cpp" Name="FileName"/>
-      <int Value="66" Name="FirstVisibleLine"/>
-      <int Value="80" Name="CurrentLine"/>
+      <int Value="94" Name="FirstVisibleLine"/>
+      <int Value="96" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/chh/catkin_ws/src/hippocampus_test/src/RapidTrajectoryGenerator.cpp" Name="FileName"/>
-      <int Value="81" Name="FirstVisibleLine"/>
-      <int Value="94" Name="CurrentLine"/>
+      <int Value="235" Name="FirstVisibleLine"/>
+      <int Value="237" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/home/chh/catkin_ws/src/hippocampus_test/include/hippocampus_test/BallCatch.hpp" Name="FileName"/>
+      <wxString Value="/home/chh/catkin_ws/src/hippocampus_test/src/test_publisher.cpp" Name="FileName"/>
       <int Value="0" Name="FirstVisibleLine"/>
-      <int Value="64" Name="CurrentLine"/>
+      <int Value="0" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
