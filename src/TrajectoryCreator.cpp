@@ -42,7 +42,7 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
     if(lowerTimeBound <= 0.3) lowerTimeBound = 0.3;
     uniform_real_distribution<> totaltime(lowerTimeBound , upperTimeBound);
     ofstream outdata; 
-    outdata.open("comptime_positionfeas.txt",std::ios_base::app);
+    outdata.open("comptime_obstaclefeas.txt",std::ios_base::app);
  
 
     
@@ -59,10 +59,9 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
         traj.SetGoalAcceleration(accf);
         traj.Generate(totaltime(gen));
         inputfeasibility =    traj.CheckInputFeasibility(fmin,fmax,wmax,minTimeSec);
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+        
         positionfeasibility = traj.CheckPositionFeasibility(Vec3(0.0, 0.0,0.0),Vec3(0.0, 0.0,1.0));
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        outdata <<std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count()<< "," <<std::endl;
+        
         //traj.Generate(timeduration + i * 0.02);
       //  
       
@@ -75,25 +74,34 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
         
         
         //ROS_INFO("RAndom X %f:", posf[0]);
-    
+        Vec3 obsPos(1.5, 1.0, 0.0);
+        double obsRadius = 0.15;
+        shared_ptr<ConvexObj> obstacle = make_shared < Sphere> (obsPos, obsRadius);
+        CollisionChecker checker(traj.GetTrajectory());
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+        CollisionChecker::CollisionResult stateFeas = checker.CollisionCheck(obstacle, 0.02);
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        outdata <<std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count()<< "," <<std::endl;
 
         //ROS_INFO("In generation");
         if(inputfeasibility==0){
        // ROS_INFO("In feasible test");
         //OBSTACLE-----------------
-  /*      Vec3 obsPos(1.5, 1.0, 0.0);
+        
+        
+  /*      
         Vec3 obsPos2(2.0, 1.5, 0.0);
         Vec3 obsPos3(1.8, 1.25, 0.5);
         Vec3 obsPos4(1.5, 0.15, 0.0);
-        double obsRadius = 0.15;
         
-        shared_ptr<ConvexObj> obstacle = make_shared < Sphere> (obsPos, obsRadius);
+        
+        
         shared_ptr<ConvexObj> obstacle2 = make_shared < Sphere> (obsPos2, obsRadius);
         shared_ptr<ConvexObj> obstacle3 = make_shared < Sphere> (obsPos3, obsRadius);
         shared_ptr<ConvexObj> obstacle4 = make_shared < Sphere> (obsPos4, obsRadius);
-        CollisionChecker checker(traj.GetTrajectory());
+      
        // std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-        CollisionChecker::CollisionResult stateFeas = checker.CollisionCheck(obstacle, 0.02);
+        ;
         // std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         //outdata <<std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count()<< "," <<std::endl;
         CollisionChecker::CollisionResult stateFeas2 = checker.CollisionCheck(obstacle2, 0.02);
