@@ -42,7 +42,7 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
     if(lowerTimeBound <= 0.3) lowerTimeBound = 0.3;
     uniform_real_distribution<> totaltime(lowerTimeBound , upperTimeBound);
     ofstream outdata; 
-    outdata.open("comptime_inputfeas.txt",std::ios_base::app);
+    outdata.open("comptime_positionfeas.txt",std::ios_base::app);
  
 
     
@@ -58,15 +58,16 @@ RapidTrajectoryGenerator TrajectoryCreator::GenerateTrajectories(const Vec3 posi
         traj.SetGoalVelocity(velf);
         traj.SetGoalAcceleration(accf);
         traj.Generate(totaltime(gen));
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
         inputfeasibility =    traj.CheckInputFeasibility(fmin,fmax,wmax,minTimeSec);
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+        positionfeasibility = traj.CheckPositionFeasibility(Vec3(0.0, 0.0,0.0),Vec3(0.0, 0.0,1.0));
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         outdata <<std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count()<< "," <<std::endl;
         //traj.Generate(timeduration + i * 0.02);
       //  
       
         
-       // positionfeasibility = traj.CheckPositionFeasibility(Vec3(0.0, 0.0,0.0),Vec3(0.0, 0.0,1.0));
+       // 
         
         //std::cout << "Time difference Traj Gen= " << std::chrono::duration_cast<std::chrono::microseconds> (end - begin).count() << "[us]" << std::endl;
         
